@@ -5,7 +5,7 @@ let shouldReset = false;
 let add = (firstNumber, secondNumber) => firstNumber + secondNumber;
 let subtract = (firstNumber, secondNumber) => firstNumber - secondNumber;
 let multiply = (firstNumber, secondNumber) => firstNumber * secondNumber; 
-let divide = (firstNumber, secondNumber) => secondNumber / firstNumber;
+let divide = (firstNumber, secondNumber) => firstNumber / secondNumber;
 const firstScreen = document.querySelector('.firstScreen');
 const secondScreen = document.querySelector('.secondScreen');
 const numberBtn = document.querySelectorAll('[data-number]');
@@ -14,15 +14,15 @@ const clearBtn = document.querySelector('[data-clear]');
 const deleteBtn = document.querySelector('[data-delete]');
 const decimalBtn = document.querySelector('[data-decimal]');
 const equalBtn = document.querySelector('[data-equal]');
-
-
+let firstOperand = null;
+let secondOperand = null;
 
 function operate (firstNumber, operator, secondNumber) {
     if(operator === "+") {
         return add(firstNumber, secondNumber);
     } else if(operator === "-") {
         return subtract(firstNumber, secondNumber);
-    } else if(operator === "*") {
+    } else if(operator === "×") {
         return multiply(firstNumber, secondNumber);
     } else if(operator === "÷") {
         return divide(firstNumber, secondNumber);
@@ -33,18 +33,28 @@ function operate (firstNumber, operator, secondNumber) {
 
 numberBtn.forEach(numberBtn => {
     numberBtn.addEventListener('click', (data) => {
-        resetScreen();
         secondScreen.textContent += numberBtn.textContent;
-        firstOperand = secondScreen.textContent;
+        secondOperand = secondScreen.textContent;
     })
 });
 
 operatorBtn.forEach(operatorBtn => {
     operatorBtn.addEventListener('click', (data) => {
-        operator = operatorBtn.textContent;
-        firstScreen.textContent += secondScreen.textContent + (" " + operator + " ");
-        secondOperand = secondScreen.textContent; 
-        
+        if (firstOperand === null) {
+            operator = operatorBtn.textContent;
+            firstOperand = secondOperand;
+            firstScreen.textContent += `${firstOperand} ${operator}`;
+            shouldReset = false;         
+            resetScreen();
+        } else {
+            let a = parseInt(firstOperand);
+            let b = parseInt(secondOperand);
+            result = operate(a, operator, b);
+            operator = operatorBtn.textContent;
+            firstScreen.textContent = `${result} ${operator}`
+            firstOperand = firstScreen.textContent;
+            resetScreen();
+        }
     })
 })
 
@@ -52,14 +62,24 @@ equalBtn.addEventListener('click', () => {
     resetScreen();
     let a = parseInt(firstOperand);
     let b = parseInt(secondOperand);
-    firstScreen.textContent = b + " " + operator + " " + a + " " + "=";
-    secondScreen.textContent = operate(a, operator, b); 
+    result = operate(b, operator, a);
+    firstScreen.textContent = `${result}`
+    firstOperand = firstScreen.textContent;
+    secondOperand = result;
+    shouldReset = false;
+    resetScreen();
 })
 
 
 function resetScreen() {
-    if (firstScreen.textContent !== "" && !shouldReset) {
-    shouldReset = true
+    if (firstOperand !== null || !shouldReset) {
+    
     secondScreen.textContent = ""
     }
+}
+
+function calculate() {
+    let a = parseInt(firstOperand);
+    let b = parseInt(secondOperand);
+    result = operate(b, operator, a);
 }
