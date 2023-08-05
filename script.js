@@ -14,8 +14,10 @@ const clearBtn = document.querySelector('[data-clear]');
 const deleteBtn = document.querySelector('[data-delete]');
 const decimalBtn = document.querySelector('[data-decimal]');
 const equalBtn = document.querySelector('[data-equal]');
+const reset = document.querySelector('.container');
 let firstOperand = null;
 let secondOperand = null;
+let result = null;
 
 function operate (firstNumber, operator, secondNumber) {
     if(operator === "+") {
@@ -33,8 +35,11 @@ function operate (firstNumber, operator, secondNumber) {
 
 numberBtn.forEach(numberBtn => {
     numberBtn.addEventListener('click', (data) => {
-        secondScreen.textContent += numberBtn.textContent;
-        secondOperand = secondScreen.textContent;
+        if (result === null) {/*
+            secondScreen.textContent += numberBtn.textContent;
+            secondOperand = secondScreen.textContent;*/
+            appendNumber(numberBtn.textContent);
+        }
     })
 });
 
@@ -46,40 +51,67 @@ operatorBtn.forEach(operatorBtn => {
             firstScreen.textContent += `${firstOperand} ${operator}`;
             shouldReset = false;         
             resetScreen();
-        } else {
-            let a = parseInt(firstOperand);
-            let b = parseInt(secondOperand);
-            result = operate(a, operator, b);
-            operator = operatorBtn.textContent;
-            firstScreen.textContent = `${result} ${operator}`
-            firstOperand = firstScreen.textContent;
-            resetScreen();
+        } else if (result === null) {
+            if (operator === '÷' && firstOperand === "0") {
+                clear();
+                return firstScreen.textContent = "Please don't make us crash!";
+            } else {
+                let a = parseInt(firstOperand);
+                let b = parseInt(secondOperand);
+                solution = operate(a, operator, b);
+                operator = operatorBtn.textContent;
+                firstScreen.textContent = `${solution} ${operator}`
+                firstOperand = firstScreen.textContent;
+                resetScreen();
+            }
         }
     })
 })
 
-equalBtn.addEventListener('click', () => {
-    resetScreen();
-    let a = parseInt(firstOperand);
-    let b = parseInt(secondOperand);
-    result = operate(b, operator, a);
-    firstScreen.textContent = `${result}`
-    firstOperand = firstScreen.textContent;
-    secondOperand = result;
-    shouldReset = false;
-    resetScreen();
+equalBtn.addEventListener('click', (once) => {
+    if (result === null) {
+        if (operator === '÷' && firstOperand === "0") {
+            clear();
+            return firstScreen.textContent = "Please don't make us crash!";
+        } else {
+            resetScreen();
+            let a = parseInt(firstOperand);
+            let b = parseInt(secondOperand);
+            result = operate(a, operator, b);
+            firstScreen.textContent = `${result}`
+            firstOperand = firstScreen.textContent;
+            secondOperand = result;
+            shouldReset = false;
+            resetScreen();
+        }
+    } else {
+        return;
+    }
 })
 
+deleteBtn.addEventListener('click', () => {
+    secondScreen.textContent = ""
+})
+
+clearBtn.addEventListener('click', () => {
+    return clear();
+})
 
 function resetScreen() {
     if (firstOperand !== null || !shouldReset) {
-    
     secondScreen.textContent = ""
     }
 }
 
-function calculate() {
-    let a = parseInt(firstOperand);
-    let b = parseInt(secondOperand);
-    result = operate(b, operator, a);
+function appendNumber(number) {
+    secondScreen.textContent += number;
+    secondOperand = secondScreen.textContent;
+}
+
+let clear = () => {
+    firstScreen.textContent = "";
+    secondScreen.textContent = "";
+    firstOperand = null;
+    secondOperand = null;
+    operator = null;
 }
