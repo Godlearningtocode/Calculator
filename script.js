@@ -35,9 +35,7 @@ function operate (firstNumber, operator, secondNumber) {
 
 numberBtn.forEach(numberBtn => {
     numberBtn.addEventListener('click', (data) => {
-        if (result === null) {/*
-            secondScreen.textContent += numberBtn.textContent;
-            secondOperand = secondScreen.textContent;*/
+        if (result === null) {
             appendNumber(numberBtn.textContent);
         }
     })
@@ -45,10 +43,18 @@ numberBtn.forEach(numberBtn => {
 
 operatorBtn.forEach(operatorBtn => {
     operatorBtn.addEventListener('click', (data) => {
-        if (firstOperand === null) {
+        if (firstOperand === null && secondOperand === null) {
+            clear()
+            operator = operatorBtn.textContent;
+            firstOperand = solution;
+            firstScreen.textContent += `${firstOperand} ${operator}`;
+            shouldReset = false;         
+            resetScreen();
+        } else if (firstOperand === null) {
             operator = operatorBtn.textContent;
             firstOperand = secondOperand;
             firstScreen.textContent += `${firstOperand} ${operator}`;
+            secondOperand = null;
             shouldReset = false;         
             resetScreen();
         } else if (result === null) {
@@ -56,9 +62,7 @@ operatorBtn.forEach(operatorBtn => {
                 clear();
                 return firstScreen.textContent = "Please don't make us crash!";
             } else {
-                let a = parseInt(firstOperand);
-                let b = parseInt(secondOperand);
-                solution = operate(a, operator, b);
+                calculate();
                 operator = operatorBtn.textContent;
                 firstScreen.textContent = `${solution} ${operator}`
                 firstOperand = firstScreen.textContent;
@@ -68,19 +72,15 @@ operatorBtn.forEach(operatorBtn => {
     })
 })
 
-equalBtn.addEventListener('click', (once) => {
+equalBtn.addEventListener('click', () => {
     if (result === null) {
         if (operator === '÷' && firstOperand === "0") {
             clear();
             return firstScreen.textContent = "Please don't make us crash!";
         } else {
             resetScreen();
-            let a = parseInt(firstOperand);
-            let b = parseInt(secondOperand);
-            result = operate(a, operator, b);
-            firstScreen.textContent = `${result}`
-            firstOperand = firstScreen.textContent;
-            secondOperand = result;
+            calculate(result)
+            firstScreen.textContent = `${solution}`
             shouldReset = false;
             resetScreen();
         }
@@ -107,6 +107,14 @@ function appendNumber(number) {
     secondScreen.textContent += number;
     secondOperand = secondScreen.textContent;
 }
+
+function calculate(result) {
+    let a = parseInt(firstOperand);
+    let b = parseInt(secondOperand);
+    solution = operate(a, operator, b);
+    firstOperand = null;
+    secondOperand = null;
+} 
 
 let clear = () => {
     firstScreen.textContent = "";
