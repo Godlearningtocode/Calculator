@@ -20,13 +20,13 @@ let secondOperand = null;
 let result = null;
 
 function operate (firstNumber, operator, secondNumber) {
-    if(operator === "+") {
+    if(operator === "+" && firstNumber !== null && secondNumber !== null) {
         return add(firstNumber, secondNumber);
-    } else if(operator === "-") {
+    } else if(operator === "-" && firstNumber !== null && secondNumber !== null) {
         return subtract(firstNumber, secondNumber);
-    } else if(operator === "×") {
+    } else if(operator === "×" && firstNumber !== null && secondNumber !== null) {
         return multiply(firstNumber, secondNumber);
-    } else if(operator === "÷") {
+    } else if(operator === "÷" && firstNumber !== null && secondNumber !== null) {
         return divide(firstNumber, secondNumber);
     } else {
         return "ERROR"
@@ -109,11 +109,14 @@ function appendNumber(number) {
 }
 
 function calculate(result) {
-    let a = parseInt(firstOperand);
-    let b = parseInt(secondOperand);
-    solution = operate(a, operator, b);
-    firstOperand = null;
-    secondOperand = null;
+    if (firstOperand !== null && secondOperand !== null) {
+        let a = parseInt(firstOperand);
+        let b = parseInt(secondOperand);
+        solution = operate(a, operator, b);
+        firstOperand = null;
+        secondOperand = null;
+    } else 
+    return
 } 
 
 let clear = () => {
